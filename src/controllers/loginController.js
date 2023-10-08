@@ -66,7 +66,7 @@ module.exports.validarCorreo = async (req, res) => {
           const [user] = await pool.query('SELECT * FROM usuario WHERE id = ?', [id]);
           
           if (user[0].estado !== 1) {
-            // Actualizar el estado del usuario
+            // Actualizar el estado del usuario.
             const [result] = await pool.query('UPDATE usuario SET estado = 1 WHERE id = ?', [id]);
           } else {
             return res.send({
