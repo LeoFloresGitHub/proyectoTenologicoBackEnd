@@ -64,7 +64,7 @@ module.exports.validarCorreo = async (req, res) => {
   
           // Luego, recuperar la información del usuario de la base de datos
           const [user] = await pool.query('SELECT * FROM usuario WHERE id = ?', [id]);
-          console.log("H")
+          
           if (user[0].estado !== 1) {
             // Actualizar el estado del usuario
             const [result] = await pool.query('UPDATE usuario SET estado = 1 WHERE id = ?', [id]);
