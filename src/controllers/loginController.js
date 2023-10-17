@@ -11,7 +11,7 @@ module.exports.postLogin = async (req, res) => {
         
         // Consulta el usuario por correo
         const [rows] = await pool.query('SELECT * FROM usuario WHERE correoElectronico = ?', [correo]);
-       
+        
         if (rows.length === 0) {
             return res.json({ message: 'Correo no encontrado' });
         }
@@ -32,7 +32,9 @@ module.exports.postLogin = async (req, res) => {
 
 
         // Crea un token JWT
-        const token = jwt.sign({ userId: user.id , tipoUsuario: user.tipoUsuario}, SECRET_KEY, { expiresIn: '1h' });
+        const [permisos] = await pool.query('Select idFuncionalidad FROM permiso WHERE idUsuario = ?',[user.id]);
+
+        const token = jwt.sign({ userId: user.id , tipoUsuario: user.tipoUsuario , permisos: permisos}, SECRET_KEY, { expiresIn: '1h' });
 
         // Envía el token en la respuesta
         res.json({ token });
@@ -120,10 +122,10 @@ module.exports.validarCorreo = async (req, res) => {
 
   module.exports.cambiarContra = async (req, res) => {
     const { correoElectronico,contrasena } = req.body;
-    
+    const ip = req.ip;
     const hashedPassword = await bcrypt.hash(contrasena, 10);
     try { 
-    const [result] = await pool.query('Update usuario set  contrasena = IFNULL(?,contrasena) where correoElectronico = ?',[  hashedPassword, correoElectronico])
+    const [result] = await pool.query('Update usuario set  contrasena = IFNULL(?,contrasena),ipModificacion = IFNULL(?,ipModificacion) where correoElectronico = ?',[  hashedPassword,ip, correoElectronico])
     if(result.affectedRows === 0)
       return res.status(404).json({message: "No se edito correctamente"})
     else{

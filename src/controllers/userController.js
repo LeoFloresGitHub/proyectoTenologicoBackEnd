@@ -37,13 +37,14 @@ module.exports.getUserByEmail = async (req,res)=>{
 
 module.exports.postUser = async (req, res) => {
   try {
-    const { nombres, apellidos, tipoDocumento, numDocumento, correoElectronico, contrasena, tipoUsuario, estado } = req.body;
+    const ip = req.ip;
+    const { nombres, apellidos, tipoDocumento, numDocumento, correoElectronico, contrasena, tipoUsuario, estado, idUsuarioAccion, ipCreacion,ipModificacion} = req.body;
     const hashedPassword = await bcrypt.hash(contrasena, 10);
     const [user] = await pool.query('Select * from usuario where correoElectronico = ? or numDocumento = ?',[correoElectronico,numDocumento])
     
     if(!user || (Array.isArray(user) && user.length === 0))
     {
-      const [result] = await pool.query('INSERT INTO usuario(tipoDocumento, numDocumento, nombres, apellidos, correoElectronico, contrasena, tipoUsuario, estado) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', [tipoDocumento,  numDocumento,nombres, apellidos, correoElectronico, hashedPassword, tipoUsuario, estado]);
+      const [result] = await pool.query('INSERT INTO usuario(tipoDocumento, numDocumento, nombres, apellidos, correoElectronico, contrasena, tipoUsuario, estado,idUsuarioAccion,ipCreacion,ipModificacion) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)', [tipoDocumento,  numDocumento,nombres, apellidos, correoElectronico, hashedPassword, tipoUsuario, estado, idUsuarioAccion,ip,ip]);
     // Envía el correo electrónico antes de enviar la respuesta al cliente
     await enviarCorreo(correoElectronico, "Verificar Correo","comprobacion");
     res.send({
@@ -57,7 +58,7 @@ module.exports.postUser = async (req, res) => {
   } catch (error) {
     //console.log(error);
     return res.status(400).json({
-      message: "DNI y/o correoElectronico ya se encuentra registrado." ,
+      message: error.message ,
     });
   }
 };
@@ -65,10 +66,11 @@ module.exports.postUser = async (req, res) => {
 
 module.exports.patchUser = async (req,res)=>{
   try {
+      const ip = req.ip;
       const {id} = req.params
       const {nombres, apellidos, tipoDocumento, numDocumento, correoElectronico, contrasena, tipoUsuario, estado} = req.body
       const hashedPassword = await bcrypt.hash(contrasena, 10);
-      const [result] = await pool.query('Update usuario set nombres = IFNULL(?,nombres), apellidos = IFNULL(?,apellidos), tipoDocumento = IFNULL(?,tipoDocumento), numDocumento = IFNULL(?,numDocumento), correoElectronico = IFNULL(?,correoElectronico), contrasena = IFNULL(?,contrasena), tipoUsuario = IFNULL (?,tipoUsuario), estado = IFNULL (?,estado) where id = ?',[nombres, apellidos, tipoDocumento, numDocumento, correoElectronico, hashedPassword, tipoUsuario, estado,id])
+      const [result] = await pool.query('Update usuario set nombres = IFNULL(?,nombres), apellidos = IFNULL(?,apellidos), tipoDocumento = IFNULL(?,tipoDocumento), numDocumento = IFNULL(?,numDocumento), correoElectronico = IFNULL(?,correoElectronico), contrasena = IFNULL(?,contrasena), tipoUsuario = IFNULL (?,tipoUsuario), estado = IFNULL (?,estado),fecha_creacion = IFNULL (?,fecha_creacion),fecha_modificacion = IFNULL (?,fecha_modificacion), ipCreacion = IFNULL (?,ipCreacion),ipModificacion = IFNULL (?,ipModificacion)  where id = ?',[nombres, apellidos, tipoDocumento, numDocumento, correoElectronico, hashedPassword, tipoUsuario, estado,null,null,null,ip,id])
       if(result.affectedRows === 0)
       return res.status(404).json({message: "No se edito correctamente"})
 
