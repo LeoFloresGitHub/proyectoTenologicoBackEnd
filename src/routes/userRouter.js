@@ -4,7 +4,8 @@ const {
   getUserByEmail,
   postUser,
   patchUser,
-  deleteUser
+  deleteUser,
+  getUserById
 } = require('../controllers/userController.js');
 
 
@@ -16,5 +17,6 @@ router.get('/user/:email',getUserByEmail)
 router.post('/user',postUser)
 router.patch('/user/:id',patchUser)
 router.delete('/user/:id',deleteUser)
+router.get('/users/:id',getUserById)
 
 module.exports = router;

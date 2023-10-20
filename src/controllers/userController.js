@@ -17,6 +17,22 @@ module.exports.getUsers = async (req,res)=>{
     }   
 }
 
+module.exports.getUserById = async (req,res)=>{
+
+  const {id} = req.params
+  try {
+    const [user] = await pool.query('Select * from usuario where id = ?',[id])
+    if (user.length === 0) {
+      throw new Error('User not found');
+    }
+    res.json(user[0]);
+  } catch (error) {
+    return res.status(500).json({
+      message: 'Something goes wrong'
+  }) }
+
+}
+
 
 module.exports.getUserByEmail = async (req,res)=>{
 
@@ -68,9 +84,9 @@ module.exports.patchUser = async (req,res)=>{
   try {
       const ip = req.ip;
       const {id} = req.params
-      const {nombres, apellidos, tipoDocumento, numDocumento, correoElectronico, contrasena, tipoUsuario, estado} = req.body
+      const {nombres, apellidos, tipoDocumento, numDocumento, correoElectronico, contrasena, tipoUsuario, estado,idUsuarioAccion} = req.body
       const hashedPassword = await bcrypt.hash(contrasena, 10);
-      const [result] = await pool.query('Update usuario set nombres = IFNULL(?,nombres), apellidos = IFNULL(?,apellidos), tipoDocumento = IFNULL(?,tipoDocumento), numDocumento = IFNULL(?,numDocumento), correoElectronico = IFNULL(?,correoElectronico), contrasena = IFNULL(?,contrasena), tipoUsuario = IFNULL (?,tipoUsuario), estado = IFNULL (?,estado),fecha_creacion = IFNULL (?,fecha_creacion),fecha_modificacion = IFNULL (?,fecha_modificacion), ipCreacion = IFNULL (?,ipCreacion),ipModificacion = IFNULL (?,ipModificacion)  where id = ?',[nombres, apellidos, tipoDocumento, numDocumento, correoElectronico, hashedPassword, tipoUsuario, estado,null,null,null,ip,id])
+      const [result] = await pool.query('Update usuario set nombres = IFNULL(?,nombres), apellidos = IFNULL(?,apellidos), tipoDocumento = IFNULL(?,tipoDocumento), numDocumento = IFNULL(?,numDocumento), correoElectronico = IFNULL(?,correoElectronico), contrasena = IFNULL(?,contrasena),idUsuarioAccion = IFNULL(?,idUsuarioAccion), tipoUsuario = IFNULL (?,tipoUsuario), estado = IFNULL (?,estado),fecha_creacion = IFNULL (?,fecha_creacion), ipCreacion = IFNULL (?,ipCreacion),ipModificacion = IFNULL (?,ipModificacion)  where id = ?',[nombres, apellidos, tipoDocumento, numDocumento, correoElectronico, hashedPassword, idUsuarioAccion,tipoUsuario, estado,null,null,ip,id])
       if(result.affectedRows === 0)
       return res.status(404).json({message: "No se edito correctamente"})
 
