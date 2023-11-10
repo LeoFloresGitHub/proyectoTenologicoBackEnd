@@ -2,6 +2,7 @@ const express = require('express');
 const routerUser = require('./routes/userRouter.js');
 const cors = require('cors');
 const routerLogin = require('./routes/loginRouter.js');
+const routerCanchas = require('./routes/reservacanchaRouter.js');
 
 const app = express()
 
@@ -10,6 +11,7 @@ app.use(express.json())
 
 app.use(cors())
 app.use('/api/proyce',routerUser)
+app.use('/api/proyce',routerCanchas)
 app.use('/auth',routerLogin)
 
 //Importamos rutas...

@@ -15,7 +15,8 @@ const transporter = nodemailer.createTransport({
 
 async function enviarCorreo(destinatario, asunto,tipo) {
     
-    const [usuario] = await pool.query('Select * from usuario where correoElectronico = ?',[destinatario])
+    const [usuario] = await pool.query('Select * from usuario where correoElectronico = ?',[destinatario]);
+
     
 
 
@@ -32,6 +33,33 @@ async function enviarCorreo(destinatario, asunto,tipo) {
         </body>
         </html>
     `;
+    }
+
+    if(tipo == "reservacancha"){
+        const [reservacancha] = await pool.query('Select * from reservacancha where idUsuario = ? order by id desc',[usuario[0].id]);
+
+    // Obtén la fecha en formato Date
+const fechaReserva = new Date(reservacancha[0].fecha);
+
+// Formatea la fecha en el formato "YYYY-MM-DD"
+const fechaFormateada = fechaReserva.toISOString().split('T')[0];
+
+        contenidoHTML = `
+        <html>
+        <body>
+            <h1>Reserva de cancha confirmada</h1>
+            <p>Hola ${usuario[0].nombres} queremos agradecer su preferencia por alquilar nuestra cancha sintética. 
+            
+            <p>Fecha de reserva : ${fechaFormateada}</p>
+            
+            <p>Hora Inicio (24hrs) : ${reservacancha[0].horaInicio}</p>
+
+            <p>¡Lo esperamos!.</p>
+
+        </body>
+        </html>
+    `;
+
     }
 
     if(tipo == "recuperar"){

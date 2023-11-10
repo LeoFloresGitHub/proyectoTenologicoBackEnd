@@ -16,7 +16,7 @@ module.exports.pool = createPool({
     user:'root',
     password:'admin',
     port:3306,
-    database:'proyce2'
+    database:'proyce'
 })
 
 
