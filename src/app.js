@@ -3,6 +3,7 @@ const routerUser = require('./routes/userRouter.js');
 const cors = require('cors');
 const routerLogin = require('./routes/loginRouter.js');
 const routerCanchas = require('./routes/reservacanchaRouter.js');
+const routerPiscinas = require('./routes/reservapiscinaRouter.js');
 
 const app = express()
 
@@ -12,6 +13,7 @@ app.use(express.json())
 app.use(cors())
 app.use('/api/proyce',routerUser)
 app.use('/api/proyce',routerCanchas)
+app.use('/api/proyce',routerPiscinas)
 app.use('/auth',routerLogin)
 
 //Importamos rutas...

@@ -28,6 +28,7 @@ module.exports.getReservasCanchas = async (req,res)=>{
 
 
 module.exports.getReservasCanchasxID = async (req,res)=>{ 
+  
     const {id} = req.query
     try {
         const [rows] = await pool.query('Select fecha,horaInicio from reservacancha where  estado = "ocupado" and idUsuario = ? order by id desc',[id])
