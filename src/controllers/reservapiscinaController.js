@@ -81,3 +81,44 @@ module.exports.postReservaPiscina = async (req, res) => {
     }
   };
   
+
+//Piscinas
+
+  //Canchas
+
+  module.exports.getPiscinas = async (req,res)=>{ 
+    
+    try {
+        const [rows] = await pool.query('Select id,nombrePiscina,capacidadTickets,estado from piscina ')
+        
+
+        res.json(rows);
+          
+    } catch (error) {
+      console.log(error)
+        return res.status(500).json({
+          
+            message: 'Something goes wrong'
+    })
+    }   
+}
+
+
+
+module.exports.updatePiscinas = async (req,res)=>{ 
+    
+  const {estado,id} = req.body;
+  
+  try {
+      const [rows] = await pool.query('Update piscina SET estado = COALESCE(?, "") where id = ?',[estado,id])
+
+      res.json(rows);
+        
+  } catch (error) {
+    console.log(error)
+      return res.status(500).json({
+        
+          message: 'Something goes wrong'
+  })
+  }   
+}

@@ -63,8 +63,6 @@ module.exports.postReservaCancha = async (req, res) => {
         
 
     var correo = usuario[0].correoElectronico;
-      console.log(correo);
-
 
         const [result] = await pool.query('INSERT INTO reservacancha(nroReservaCancha, idUsuario, idCancha, horaInicio, horaFin, fecha,estado) VALUES (?, ?, ?, ?, ?, ?,"ocupado")', [nroReservaCancha,idUsuario,idCancha,horaInicio,horaFin,fecha]);
       
@@ -85,4 +83,43 @@ module.exports.postReservaCancha = async (req, res) => {
       });
     }
   };
+
   
+
+  //Canchas
+
+  module.exports.getCanchas = async (req,res)=>{ 
+    
+    try {
+        const [rows] = await pool.query('Select id,nombreCancha,estado from cancha ')
+        
+
+        res.json(rows);
+          
+    } catch (error) {
+      console.log(error)
+        return res.status(500).json({
+          
+            message: 'Something goes wrong'
+    })
+    }   
+}
+
+module.exports.updateCanchas = async (req,res)=>{ 
+    
+  const {nombreCancha,estado,id} = req.body;
+  
+  console.log(nombreCancha);
+  try {
+      const [rows] = await pool.query('Update cancha SET nombreCancha = COALESCE(NULLIF(?, ""), nombreCancha),estado = COALESCE(?, "") where id = ?',[nombreCancha,estado,id])
+
+      res.json(rows);
+        
+  } catch (error) {
+    console.log(error)
+      return res.status(500).json({
+        
+          message: 'Something goes wrong'
+  })
+  }   
+}
