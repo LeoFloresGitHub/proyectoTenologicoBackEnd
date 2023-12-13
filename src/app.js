@@ -6,6 +6,7 @@ const routerCanchas = require('./routes/reservacanchaRouter.js');
 const routerPiscinas = require('./routes/reservapiscinaRouter.js');
 const routerSalones = require('./routes/reservasalonRouter.js');
 const routerFuncionalidad = require('./routes/funcionalidadRouter.js');
+const routerEstadisticas = require('./routes/estadisticasRouter.js');
 
 
 
@@ -20,6 +21,8 @@ app.use('/api/proyce',routerCanchas)
 app.use('/api/proyce',routerPiscinas)
 app.use('/api/proyce',routerSalones)
 app.use('/api/proyce',routerFuncionalidad)
+app.use('/api/proyce',routerEstadisticas)
+
 
 
 app.use('/auth',routerLogin)
